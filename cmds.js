@@ -201,6 +201,7 @@ exports.testCmd = (rl, id) => {
       });
     }
    } 
+   playOne();
  };
  
  
