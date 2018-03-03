@@ -184,7 +184,7 @@ exports.testCmd = (rl, id) => {
       rl.prompt();
     } else {
       let ir = Math.random() * (toBeResolved.length - 1);
-      let id = Math.rounf(ir);
+      let id = Math.round(ir);
       rl.question(colorize(toBeResolved[id].question+"? ", 'red'), answer => {
         if(toBeResolved[id].answer.toLowerCase().trim() === answer.toLowerCase().trim()){
           score++;
