@@ -170,12 +170,14 @@ exports.testCmd = (rl, id) => {
    //log('Jugar.', 'red');
    let score = 0;
    let toBeResolved = [];
+	 
    for(let i=0; i<model.count(); i++){
      toBeResolved[i] = model.getByIndex(i);
    };
    
    const playOne = () => {
     if(toBeResolved.length === 0) {
+      log("No hay más preguntas.");
       log("Fin del juego. Aciertos: " + score);
       biglog(score, 'magenta');
       score = 0;
