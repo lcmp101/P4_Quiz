@@ -221,30 +221,26 @@ exports.editCmd = (rl, id) => {
 exports.testCmd = (rl, id) => {
   //log('Probar el quiz indicado.', 'red');
   validateId(id)
-        .then(id => models.quiz.findById(id))
-        .then(quiz=>{
-            if(!quiz){
-                throw  new Error(`No existe un quiz asociado al id=${id}.`)
-            }
-            return makeQuestion(rl,`${quiz.question} ? `)
-                .then(a => {
-                    let respuesta = a.trim().toLowerCase()
-                    let resp  =quiz.answer;
-                    if(respuesta !== resp.trim().toLowerCase()) {
-                        log('Su respuesta es incorrecta.'),
-                            biglog("Incorrecta", "red")
-                    }else {
-                        return log('Su respuesta es correcta.'),
-                            biglog("Correcta", "green")
-                    }
-                });
-        })
-        .catch(error=>{
-                 errorlog(error.message);
-        })
-        .then(()=>{
-           rl.prompt();
-  });
+	.then(id => models.quiz.findById(id))
+	.then(quiz => {
+		log(` [${colorize(id,'magenta')}]: ${quiz.question}`);
+		return makeQuestion(rl, 'Introduzca la respuesta')
+		.then(a => {
+			if(a.toLowerCase().trim() === quiz.answer.toLowerCase()){ 
+				log("Su respuesta es correcta.");
+				biglog("Correcta","green");
+			} else{
+				log("Su respuesta es incorrecta.");
+				biglog("Incorrecta","red");
+			}
+		})
+		.catch(error => {
+			errorlog(error.message);
+		})
+		.then(() => {
+			rl.prompt();
+		});
+});
 };
 
 
@@ -254,54 +250,53 @@ exports.testCmd = (rl, id) => {
  */
  exports.playCmd = rl => {
    //log('Jugar.', 'red');
-  var cntdr = 1;
-	var toBeResolved = [];
-	var score = 0;
+  let score = 0;
+	let toBeResolved = [];
+
 	models.quiz.findAll()
-    .each(quiz => {
-		toBeResolved[cntdr-1] = cntdr;
-		cntdr = cntdr +1 ;
-    })
-    .then(() => {
-	    const playOne = ()=> {
-			if ( toBeResolved.length === 0){
-				log("No hay más preguntas.");
-				log(`Fin del juego. Aciertos: ${score}`),
-				biglog(score, 'magenta');
+	.then(quizzes => {
+		quizzes.forEach((quiz, id) => {
+  		toBeResolved[id] = quiz;
+		});
+
+		const PlayOne = () => {
+			if( toBeResolved [0] === "undefined" || typeof toBeResolved === "undefined" || toBeResolved.length === 0){ //comprobar si esta vacio
+  				log("No hay más preguntas.");
+  				log("Fin del juego. Aciertos: ", score);
+				biglog(score,'magenta');
 				rl.prompt();
-			}else{
-				let rand = Math.trunc(Math.random()*toBeResolved.length);
-				let id = toBeResolved[rand];
-				validateId(id)
-				.then(id => models.quiz.findById(id))
-				.then(quiz => {
-					pregunta = quiz.question;
-					makeQuestion(rl, pregunta + '?')
-					.then(a => {
-						console.log(a);
-						if ( a.toLocaleLowerCase() === quiz.answer.toLocaleLowerCase()){
-							score++;
-							log(`CORRECTO - Lleva ${score} aciertos.`); 
-							toBeResolved.splice(rand,1);
-							playOne();
-						}else{
-							log('INCORRECTO.');
-							log(`Fin del juego. Aciertos: ${score}`);
-							biglog(score,'magenta');
-							rl.prompt();
-						}
-					});
+			} else{ 
+				let indice = 0;
+				indice = Math.floor(Math.random() * toBeResolved.length);
+				const quiz = toBeResolved[indice];
+				log(`${colorize(quiz.question,'yellow')}`);
+				toBeResolved.splice(indice,1);
+				makeQuestion(rl,'Introduzca una respuesta')
+				.then(a => {
+					if(a.toLowerCase().trim() === quiz.answer.toLowerCase()){
+						score++;
+						console.log("CORRECTO - Lleva %s aciertos. ",score)
+						PlayOne();
+					}else{
+  						console.log(colorize("Respuesta incorrecta",'red'));
+  						console.log("Numero de aciertos: ",score);
+  						console.log("Fin");
+						biglog(score,'magenta')
+						rl.prompt();
+					}
 				})
-				.catch(error => {
+				.catch((error) => {
 					errorlog(error.message);
-				})
-				.then(() => {
-					rl.prompt();
 				});
 			}
-	    };
-	    playOne();
-    });    
+		};
+
+
+		PlayOne();
+	})
+	.catch((error) => {
+		errorlog(error.message);
+});
 };
  
  
