@@ -1,7 +1,7 @@
 
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize("sqlite:db.sqlite", {logging: false});
+const sequelize = new Sequelize("sqlite:quizzes.sqlite", {logging: false});
 
 sequelize.define('quiz', {
   question: {
