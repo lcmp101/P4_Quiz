@@ -286,7 +286,8 @@ exports.testCmd = (rl, id) => {
 							playOne();
 						}else{
 							log('INCORRECTO.');
-							log(`Fin del juego. Aciertos: ${score}`);
+							log('Fin del juego.');
+							log(`Aciertos: ${score}`);
 							biglog(score,'magenta');
 							rl.prompt();
 						}
