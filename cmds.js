@@ -281,12 +281,12 @@ exports.testCmd = (rl, id) => {
 						console.log(a);
 						if ( a.toLocaleLowerCase() === quiz.answer.toLocaleLowerCase()){
 							score++;
-							log('INCORRECTO')
+							log("CORRECTO");
 							log(`Lleva ${score} aciertos.`);
 							toBeResolved.splice(rand,1);
 							playOne();
 						}else{
-							log('CORRECTO');
+							log("INCORRECTO");
 							log('Fin del juego.');
 							log(`Aciertos: ${score}`);
 							biglog(score,'magenta');
@@ -298,6 +298,7 @@ exports.testCmd = (rl, id) => {
 					errorlog(error.message);
 				})
 				.then(() => {
+					log("Fin.");
 					rl.prompt();
 				});
 			}
