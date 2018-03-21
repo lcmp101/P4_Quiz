@@ -218,7 +218,7 @@ exports.editCmd = (socket, rl, id) => {
  * 
  * @param id Clave del quiz a probar.
  */
-exports.testCmd = (rl, id) => {
+exports.testCmd = (socket, rl, id) => {
   //log('Probar el quiz indicado.', 'red');
   validateId(id)
         .then(id => models.quiz.findById(id))
